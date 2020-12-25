@@ -102,7 +102,15 @@ def createTransfer(request):
             tmp.customer = user
             # if tmp.is_valid():
             tmp.save()
-            return redirect('/')
+            context = {'form': form}
+            print(form)
+            return render(request, 'accounts/transfer_confirm.html', context)
 
     context = {'form': form}
+    return render(request, 'accounts/transfer_form.html', context)
+
+
+@login_required(login_url='login')
+def confirmTransfer(request):
+    context = {}
     return render(request, 'accounts/transfer_form.html', context)

@@ -1,0 +1,16 @@
+1. Logowanie używa wbudowanej w Django metody login.
+Cały pakiet django.contrib.auth jest porządnie (z dokłądnością do bezpieczeństwa) zabezpieczony.
+Dokumentacja Django na temat OWASP wymienia te miejsca, w których Django może zostać zaatakowane:
+
+XSS:
+<style class={{ var }}>...</style>
+- nie używamy takiej konstruckji
+
+CSRF:
+csrf_token
+CSRF protection works by checking for a secret in each POST request. This ensures that a malicious user cannot “replay”
+a form POST to your website and have another logged in user unwittingly submit that form. The malicious user would have
+to know the secret, which is user specific (using a cookie).
+
+SQL injection:
+Django’s querysets are protected from SQL injection since their queries are constructed using query parameterization.
