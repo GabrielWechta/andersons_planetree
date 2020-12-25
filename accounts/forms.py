@@ -8,7 +8,7 @@ from .models import Transfer
 class TransferForm(ModelForm):
     class Meta:
         model = Transfer
-        fields = '__all__'
+        fields = ['receiver_name', 'account_number', 'title', 'amount']
 
 
 class CreateUserForm(UserCreationForm):

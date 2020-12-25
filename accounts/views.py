@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
@@ -52,33 +53,55 @@ def logoutUser(request):
 
 @login_required(login_url='login')
 def home(request):
-    return render(request, 'accounts/dashboard.html')
+    if request.user.is_authenticated:
+        username = request.user.username
+    transfers = Transfer.objects.all()
+    good_transfer = Transfer.objects.none()
+    for t in transfers:
+        if str(t.customer) == username:
+            good_transfer |= Transfer.objects.filter(id=t.id)
+    number = good_transfer.count()
+
+    context = {'number': number}
+    return render(request, 'accounts/dashboard.html', context)
 
 
 @login_required(login_url='login')
 def products(request):
+    username = None
+    if request.user.is_authenticated:
+        username = request.user.username
     transfers = Transfer.objects.all()
-    print("tra ", transfers)
-    return render(request, 'accounts/products.html', {'transfers': transfers})
+    good_transfer = Transfer.objects.none()
+    for t in transfers:
+        if str(t.customer) == username:
+            good_transfer |= Transfer.objects.filter(id=t.id)
+
+    return render(request, 'accounts/products.html', {'transfers': good_transfer})
 
 
-@login_required(login_url='login')
-def customer(request, pk):
-    customer = Customer.objects.get(id=pk)
-
-    transfers = customer.transfer_set.all()
-    transfer_count = transfers.count()
-    context = {'customer': customer, 'transfers': transfers, 'transfer_count': transfer_count}
-    return render(request, 'accounts/customer.html', context)
+# @login_required(login_url='login')
+# def customer(request, pk):
+#     customer = Customer.objects.get(id=pk)
+#
+#     transfers = customer.transfer_set.all()
+#     transfer_count = transfers.count()
+#     context = {'customer': customer, 'transfers': transfers, 'transfer_count': transfer_count}
+#     return render(request, 'accounts/customer.html', context)
 
 
 @login_required(login_url='login')
 def createTransfer(request):
     form = TransferForm()
     if request.method == "POST":
-        form = TransferForm(request.POST)
-        if form.is_valid():
-            form.save()
+        user = None
+        if request.user.is_authenticated:
+            user = request.user
+            form = TransferForm(request.POST)
+            tmp = form.save(commit=False)
+            tmp.customer = user
+            # if tmp.is_valid():
+            tmp.save()
             return redirect('/')
 
     context = {'form': form}
