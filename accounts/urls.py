@@ -12,7 +12,7 @@ urlpatterns = [
     path('products/', views.products, name="products"),
     # path('customer/<str:pk>/', views.customer, name="customer"),
     path('create_transfer/', views.createTransfer, name="create_transfer"),
-    path('confirm_transfer/', views.confirmTransfer, name="confirm_transfer"),
+    path('send_back_transfer/', views.sendBackTransfer, name="send_back_transfer"),
 
     path('reset_password/', auth_views.PasswordResetView.as_view(), name="reset_password"),
     path('reset_password_sent/', auth_views.PasswordResetDoneView.as_view(), name="password_reset_done"),

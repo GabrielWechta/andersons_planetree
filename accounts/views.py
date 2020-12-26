@@ -98,12 +98,11 @@ def createTransfer(request):
         if request.user.is_authenticated:
             user = request.user
             form = TransferForm(request.POST)
-            tmp = form.save(commit=False)
+            # print(form.id)
+            tmp = form.save( commit=False)
             tmp.customer = user
-            # if tmp.is_valid():
             tmp.save()
-            context = {'form': form}
-            print(form)
+            context = {'post': request.POST}
             return render(request, 'accounts/transfer_confirm.html', context)
 
     context = {'form': form}
@@ -111,6 +110,16 @@ def createTransfer(request):
 
 
 @login_required(login_url='login')
-def confirmTransfer(request):
-    context = {}
-    return render(request, 'accounts/transfer_form.html', context)
+def sendBackTransfer(request):
+    print('inside!!!!!!!!!!!!!!!!!!')
+    transfers = []
+    for item in Transfer.objects.all():
+        if item.customer_id == request.user.id:  # ?
+            transfers.append(item)
+
+    transfer = transfers[-1]
+
+    context = {
+        'post': transfer
+    }
+    return render(request, 'accounts/transfer_sent_back.html', context)
